@@ -1,8 +1,6 @@
 import json
-import spaces
 from typing import List
 import gradio as gr
-from transformers import BitsAndBytesConfig
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline, ChatHuggingFace
 from langchain_community.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
@@ -12,22 +10,15 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain.docstore.document import Document
 
-
-quantization_config = BitsAndBytesConfig(
-    load_in_8bit=True
-)
-
 model = HuggingFacePipeline.from_model_id(
-    model_id="microsoft/Phi-4-mini-instruct",
+    model_id="HuggingFaceTB/SmolLM2-360M-Instruct",
     task="text-generation",
-    device_map="auto",
     pipeline_kwargs=dict(
         max_new_tokens=512,
         do_sample=False,
         repetition_penalty=1.03,
         return_full_text=False,
     ),
-    model_kwargs={"quantization_config": quantization_config},
 )
 
 llm = ChatHuggingFace(llm=model)
@@ -109,7 +100,6 @@ qa_prompt = ChatPromptTemplate.from_messages([
 def format_context(docs) -> str:
     return "\n\n".join([f"Doc {i+1}: {doc.page_content}" for i, doc in enumerate(docs)])
 
-@spaces.GPU
 def chat_with_rag(query: str, history: List[tuple[str, str]]) -> str:
     chat_history = []
     for human, ai in history:
