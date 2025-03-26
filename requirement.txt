@@ -1,0 +1,11 @@
+rank_bm25
+spaces
+langchain-core
+gradio
+langchain
+langchain-huggingface
+langchain-community
+faiss-cpu
+huggingface_hub
+torch
+transformers
